@@ -1,0 +1,30 @@
+NAME="man"
+VERSION=1.6g
+RELEASE=1
+CATEGORY="Base Doc"
+SUMMARY="Man, apropos, and whatis commands"
+DESCRIPTION="The man page suite, including man, apropos, and whatis consists of
+programs that are used to read most of the documentation available on the
+system. The whatis and apropos programs can be used to find documentation
+related to a particular subject."
+HOMEPAGE="http://primates.ximian.com/~flucifredi/man/"
+SRC_URI="http://primates.ximian.com/~flucifredi/man/man-${VERSION}.tar.gz"
+
+REQUIRES="bzip2 coreutils gawk groff gzip less xz"
+
+src_compile() {
+	lndirs
+	cd ${B}
+	BUILD_CC=gcc \
+	CC=${CC} \
+	CFLAGS="${CFLAGS}" \
+	./configure -prefix=/usr -confdir=/etc -mandir=/usr/share/man +lang all +fhs
+	cygmake -j1 LIBS=-Wl,-dn,-lcatgets,-dy
+}
+
+src_install() {
+	cd ${B}
+	cyginstall -j1
+
+	make_etc_defaults /etc/man.conf
+}
